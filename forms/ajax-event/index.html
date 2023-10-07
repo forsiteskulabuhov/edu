@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>AJAX Event формы</title>
+</head>
+<body>
+<h3>Форма авторизации</h3>
+<form
+        action="auth.php" method="post"
+        data-success-message="Авторизация прошла успешно"
+        data-error-message="Ошибка авторизации"
+>
+    <label>Введите имя пользователя:</label><br>
+    <input type="text" name="username" required><br>
+    <label>Введите пароль:</label><br>
+    <input type="password" name="password" required><br><br>
+    <input type="submit" value="отправить">
+</form>
+<hr>
+<h3>Форма отправки письма</h3>
+<form
+        action="mail.php" method="post"
+        data-success-message="Сообщение успешно отправлено"
+        data-error-message="Ошибка при отправке сообщения"
+>
+    <label>Введите ваше имя:</label><br>
+    <input type="text" name="name" required><br>
+    <label>Введите ваш email:</label><br>
+    <input type="email" name="email" required><br><br>
+    <input type="submit" value="отправить">
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let forms = document.querySelectorAll('form')
+
+        forms.forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault()
+                send(form)
+            })
+        })
+    })
+
+    function send(form) {
+        let url = form.action
+        let method = form.method
+        let formData = new FormData(form)
+        let serializedData = new URLSearchParams(formData).toString()
+        let successMessage = form.getAttribute('data-success-message')
+        let errorMessage = form.getAttribute('data-error-message')
+
+        let xhr = new XMLHttpRequest()
+        xhr.open(method, url, true)
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200){
+                    if (xhr.responseText.trim() === 'ok') {
+                        alert(successMessage)
+                    } else {
+                        alert(errorMessage)
+                    }
+                } else {
+                    alert('Ошибка при соединении с сервером')
+                }
+            }
+        };
+        xhr.send(serializedData)
+    }
+</script>
+</body>
+</html>

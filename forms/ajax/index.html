@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>AJAX форма</title>
+</head>
+<body>
+    <label>Введите ваше имя:</label><br>
+    <input type="text" id="name"><br>
+    <label>Введите ваш email:</label><br>
+    <input type="email" id="email"><br><br>
+    <button type="button" onclick="send()">отправить</button>
+    <script>
+        function send() {
+            let name = document.getElementById('name').value
+            let email = document.getElementById('email').value
+
+            if (!name) {
+                alert('Введите имя')
+                return
+            }
+
+            if (!email) {
+                alert('Введите email')
+                return
+            }
+
+            let data = "name=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email)
+            let xhr = new XMLHttpRequest()
+            xhr.open('POST', 'mail.php', true)
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200){
+                        if (xhr.responseText.trim() === 'ok') {
+                            alert('Сообщение успешно отправлено')
+                        } else {
+                            alert('Ошибка при отправке сообщения')
+                        }
+                    } else {
+                        alert('Ошибка при соединении с сервером')
+                    }
+                }
+            }
+            xhr.send(data)
+        }
+    </script>
+</body>
+</html>
